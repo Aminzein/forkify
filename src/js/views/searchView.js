@@ -27,6 +27,14 @@ const limitRecipeTitle = (title , limit = 17) => {
 }
 
 
+export const highlightSelected = id => {
+    const previewArr = Array.from(document.querySelectorAll('.preview__link'));
+    previewArr.forEach(el => {
+        el.classList.remove('preview__link--active');
+    })
+    document.querySelector(`a[href="${id}"]`).classList.add('preview__link--active');
+}
+
 const renderRecipe = recipe => {
     const markup = `
     <li class="preview" data-id="${recipe.recipe_id}">

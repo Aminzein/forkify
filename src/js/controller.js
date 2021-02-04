@@ -48,6 +48,7 @@ elements.searchResPage.addEventListener('click' , event => {
 const controlRecipe = async (id) => {
     recipeView.clearRecipe();
     renderLoader(elements.recipe);
+    if(state.search) searchView.highlightSelected(id);
     try{
         state.recipe = new Recipe(id);
         await state.recipe.getRecipe();
