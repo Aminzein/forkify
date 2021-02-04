@@ -76,4 +76,17 @@ elements.searchResList.addEventListener('click' , event => {
         controlRecipe(id);
     }
 });
+// recipe button clicks
+elements.recipe.addEventListener('click' , event => {
+    if(event.target.matches('.btn--decrease-servings' , 'btn--decrease-servings *')){
+        if(state.recipe.servings > 1){
+            state.recipe.updateServings('dec');
+            recipeView.updateServingsIngredients(state.recipe);
+        }
+    }
+    else if(event.target.matches('.btn--increase-servings' , 'btn--increase-servings *')){
+        state.recipe.updateServings('inc');
+        recipeView.updateServingsIngredients(state.recipe);
+    }
+})
 /***************************************************/
