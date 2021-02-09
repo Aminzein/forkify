@@ -3,6 +3,7 @@ import * as searchView from './views/searchView'
 import * as recipeView from './views/recipeView'
 import {elements , renderLoader , clearLoader} from './views/base'
 import Recipe from './models/recipe';
+import List from './models/List';
 const state = {};
 /**
  * Search Controller 
@@ -54,6 +55,7 @@ const controlRecipe = async (id) => {
         await state.recipe.getRecipe();
         state.recipe.calculateTime();
         state.recipe.calculateServings();
+        console.log(state.recipe);
         state.recipe.parseIngredients();
         recipeView.renderRecipe(state.recipe);
     }
