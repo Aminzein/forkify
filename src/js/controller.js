@@ -3,7 +3,7 @@ import * as searchView from './views/searchView'
 import * as recipeView from './views/recipeView'
 import {elements , renderLoader , clearLoader} from './views/base'
 import Recipe from './models/recipe';
-import List from './models/List';
+import * as bookMarkView from './views/bookmarksView';
 const state = {};
 /**
  * Search Controller 
@@ -80,15 +80,18 @@ elements.searchResList.addEventListener('click' , event => {
 });
 // recipe button clicks
 elements.recipe.addEventListener('click' , event => {
-    if(event.target.matches('.btn--decrease-servings' , 'btn--decrease-servings *')){
+    if(event.target.matches('.btn--decrease-servings , .btn--decrease-servings *')){
         if(state.recipe.servings > 1){
             state.recipe.updateServings('dec');
             recipeView.updateServingsIngredients(state.recipe);
         }
     }
-    else if(event.target.matches('.btn--increase-servings' , 'btn--increase-servings *')){
+    else if(event.target.matches('.btn--increase-servings , .btn--increase-servings *')){
         state.recipe.updateServings('inc');
         recipeView.updateServingsIngredients(state.recipe);
+    }
+    else if(event.target.matches('.btn--round , .btn--round *')){
+        bookMarkView.renderBookmark(state.recipe);
     }
 })
 /***************************************************/

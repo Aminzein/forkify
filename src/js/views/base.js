@@ -7,7 +7,8 @@ export const elements = {
     searchElement : document.querySelector('.search-results') ,
     searchResPage : document.querySelector('.pagination') , 
     recipePreview : document.querySelector('.preview') ,
-    recipe : document.querySelector('.recipe')
+    recipe : document.querySelector('.recipe') ,
+    bookMarks : document.querySelector('.bookmarks__list')
 }
 
 export const elementStrings = {
