@@ -13,6 +13,7 @@ export default class Recipe {
             this.img = result.recipe.image_url;
             this.url = result.recipe.source_url;
             this.ingredients = result.recipe.ingredients;
+            this.isBookMark = false;
         }
         catch(error){
             alert(error);
@@ -90,6 +91,9 @@ export default class Recipe {
             ing.count *= (newServings/this.servings);
         })
         this.servings = newServings;
+    }
+    updateBookMarkStatus(value){
+        this.isBookMark = value;
     }
      
 } 

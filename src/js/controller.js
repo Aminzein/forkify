@@ -4,7 +4,11 @@ import * as recipeView from './views/recipeView'
 import {elements , renderLoader , clearLoader} from './views/base'
 import Recipe from './models/recipe';
 import * as bookMarkView from './views/bookmarksView';
+import BookMark from './models/BookMark';
 const state = {};
+state.bookMark = new BookMark();
+state.bookMark.getItemsFromStorage();
+
 /**
  * Search Controller 
  */
@@ -55,7 +59,7 @@ const controlRecipe = async (id) => {
         await state.recipe.getRecipe();
         state.recipe.calculateTime();
         state.recipe.calculateServings();
-        console.log(state.recipe);
+        state.recipe.isBookMark = state.bookMark.searchItem(state.recipe.id) === -1 ? false : true;
         state.recipe.parseIngredients();
         recipeView.renderRecipe(state.recipe);
     }
@@ -91,7 +95,31 @@ elements.recipe.addEventListener('click' , event => {
         recipeView.updateServingsIngredients(state.recipe);
     }
     else if(event.target.matches('.btn--round , .btn--round *')){
-        bookMarkView.renderBookmark(state.recipe);
+        handleBookMarkButtonClick();
     }
 })
 /***************************************************/
+
+/**
+* Book Marks 
+*/
+
+
+const handleBookMarkButtonClick = () => {
+    const {img , url , author ,title , id} = state.recipe;
+    if(!state.recipe.isBookMark){
+        bookMarkView.hideMessage();
+        state.bookMark.addItem(img , title , url , author , id);
+        state.recipe.updateBookMarkStatus(true);
+        recipeView.renderBookMarkButton(state.recipe.isBookMark);
+        state.bookMark.saveItemsInStorage();
+    }
+    else {
+        state.bookMark.deleteItem(id);
+        state.recipe.updateBookMarkStatus(false);
+        recipeView.renderBookMarkButton(state.recipe.isBookMark);
+        state.bookMark.saveItemsInStorage();
+    }
+    bookMarkView.renderAllBookMarks(state.bookMark.items);
+}
+bookMarkView.renderAllBookMarks(state.bookMark.items);

@@ -1,5 +1,5 @@
 import {elements} from './base'
-import icons from 'url:../../img/icons.svg';
+import * as paginationView from './paginationView';
 export const getInput = () => elements.searchInput.value; 
 
 export const clearInput = () => {
@@ -57,50 +57,6 @@ const renderRecipe = recipe => {
     elements.searchResList.insertAdjacentHTML('beforeend' , markup);
 }
 
-//type: 'prev' or 'next'
-
-const createPageButtons = (page , type) => 
-    `<button class="btn--inline pagination__btn--${type}" data-goto=${type === 'prev' ? page -1 : page + 1}>
-        <svg class="search__icon">
-            <use href="${icons}#icon-arrow-${type === 'prev' ? 'left' : 'right'}"></use>
-        </svg>
-        <span>Page ${type === 'prev' ? page -1 : page + 1}</span>
-    </button>`;
-
-/*
-          `<button class="btn--inline pagination__btn--prev">
-            <svg class="search__icon">
-              <use href="src/img/icons.svg#icon-arrow-left"></use>
-            </svg>
-            <span>Page 1</span>
-          </button>
-          <button class="btn--inline pagination__btn--next">
-            <span>Page 3</span>
-            <svg class="search__icon">
-              <use href="src/img/icons.svg#icon-arrow-right"></use>
-            </svg>
-          </button>`;
-*/
-
-const renderPageButtons = (page , numRes , resPerPage) => {
-    const pages = Math.ceil(numRes / resPerPage);
-    let button;
-    if(page === 1 && pages > 1){
-        button = createPageButtons(page , 'next');
-    }
-    else if(page < pages){
-        //both pages
-        button = `
-            ${createPageButtons(page , 'prev')}
-            ${createPageButtons(page , 'next')}
-        `; 
-    } 
-    else if(page === pages && pages > 1){
-        // go to previous page
-        button = createPageButtons(page , 'prev');
-    }
-    elements.searchResPage.insertAdjacentHTML('afterbegin' , button);
-}
 
 export const renderResults = (recipes , page = 1 , resPerPage = 10) => {
     const start = (page-1) * resPerPage;
@@ -108,5 +64,5 @@ export const renderResults = (recipes , page = 1 , resPerPage = 10) => {
     const rec = recipes.slice(start , end);
     rec.forEach(recipe => renderRecipe(recipe));
     //render page buttons
-    renderPageButtons(page , recipes.length , resPerPage);
+    paginationView.renderPageButtons(page , recipes.length , resPerPage , elements.searchResPage);
 }

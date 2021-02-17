@@ -1,16 +1,21 @@
 export default class BookMark {
     constructor(){
         this.items = [];
+        this.key = "bookmark";
+    }
+
+    isEmpty(){
+        return Array.isArray(this.items) && !this.items.length;
     }
 
     searchItem(id){
         return this.items.findIndex(el => el.id === id);
     }
 
-    addItem(image , title , url , author , id){
-        if(this.searchItem(id) !== -1){
+    addItem(img , title , url , author , id){
+        if(this.searchItem(id) === -1){
             const item = {
-                image ,
+                img ,
                 title ,
                 url ,
                 author ,
@@ -28,11 +33,12 @@ export default class BookMark {
     }
 
     saveItemsInStorage(){
-        localStorage.setItem('bookmark' , JSON.stringify(this.items));
+        localStorage.setItem(this.key , JSON.stringify(this.items));
     }
 
     getItemsFromStorage(){
-        let stringItems = localStorage.getItem('bookmark');
-        this.items = stringItems.json()
+        let stringItems = localStorage.getItem(this.key);
+        if(stringItems !== null) this.items = JSON.parse(stringItems);
     }
+
 } 

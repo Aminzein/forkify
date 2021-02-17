@@ -21,6 +21,15 @@ const formatCount = count => {
   return '?';
 }
 
+const generateBookMarkButton = isBookMark => (`
+  <svg class="">
+    <use href="${icons}#icon-bookmark-${isBookMark ? 'fill' : ''}"></use>
+  </svg>`
+  )
+
+export const renderBookMarkButton = isBookMark => {
+  document.querySelector('.btn--round').innerHTML = generateBookMarkButton(isBookMark);
+}
 
 const createiIngredient = ing => `
   <li class="recipe__ingredient">
@@ -83,9 +92,7 @@ export const renderRecipe = recipe => {
       </svg>
     </div>
     <button class="btn--round">
-      <svg class="">
-        <use href="${icons}#icon-bookmark-fill"></use>
-      </svg>
+      ${generateBookMarkButton(recipe.isBookMark)}
     </button>
   </div>
 
