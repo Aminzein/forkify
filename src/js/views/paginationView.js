@@ -1,3 +1,5 @@
+import icons from 'url:../../img/icons.svg';
+
 //type: 'prev' or 'next'
 const createPageButtons = (page , type) => 
     `<button class="btn--inline pagination__btn--${type}" data-goto=${type === 'prev' ? page -1 : page + 1}>
@@ -8,7 +10,7 @@ const createPageButtons = (page , type) =>
     </button>`;
 
 
-export const renderPageButtons = (page , numRes , resPerPage , parent) => {
+export const renderPageButtons = (page , numRes , resPerPage , parent , place = 'afterbegin') => {
     const pages = Math.ceil(numRes / resPerPage);
     let button;
     if(page === 1 && pages > 1){
@@ -25,5 +27,5 @@ export const renderPageButtons = (page , numRes , resPerPage , parent) => {
         // go to previous page
         button = createPageButtons(page , 'prev');
     }
-    parent.insertAdjacentHTML('afterbegin' , button);
+    parent.insertAdjacentHTML(place, button);
 }    

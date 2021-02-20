@@ -120,8 +120,7 @@ export const renderRecipe = recipe => {
         <use href="${icons}#icon-arrow-right"></use>
       </svg>
     </a>
-  </div>
-    `;
+  </div>`;
   elements.recipe.insertAdjacentHTML("afterbegin" , markup);  
 }
 

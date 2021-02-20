@@ -15,17 +15,16 @@ const renderBookMark = ({img , url , title , author , id}) => {
             <p class="preview__author">${author}</p>
         </div>
         </a>
-    </li>
-    `;
+    </li>`;
     elements.bookMarks.insertAdjacentHTML('beforeend' , markup);
 }
 
-const clearBookmarks = () => {
+export const clearBookmarks = () => {
     elements.bookMarks.innerHTML = '';
 }
 
 
-const getMessageElement = () => (`
+const getMessageElement = () => `
     <div class="message">
         <div>
         <svg>
@@ -36,7 +35,7 @@ const getMessageElement = () => (`
         No bookmarks yet. Find a nice recipe and bookmark it :)
         </p>
     </div>`
-)
+
 
 export const hideMessage = () => {
     const el = document.querySelector('.message');
@@ -48,13 +47,13 @@ export const showMessage = () => {
     elements.bookMarks.innerHTML = getMessageElement();
 }
 
-export const renderAllBookMarks = (bookMark , page = 1 , markPerPage = 4) => {
+export const renderAllBookMarks = (bookMark , page = 1 , markPerPage = 3) => {
     const startIndex = (page-1) * markPerPage;
     const endIndex = startIndex + markPerPage;
     clearBookmarks();
     if(bookMark.length !== 0){
         bookMark.slice(startIndex , endIndex).forEach(el => renderBookMark(el));
-        paginationView.renderPageButtons(page , bookMark.length , markPerPage , elements.bookMarks);
+        paginationView.renderPageButtons(page , bookMark.length , markPerPage , elements.bookMarks , 'beforeend');
     }
     else {
         showMessage();

@@ -2,12 +2,16 @@ import Search from './models/Search';
 import * as searchView from './views/searchView' 
 import * as recipeView from './views/recipeView'
 import {elements , renderLoader , clearLoader} from './views/base'
-import Recipe from './models/recipe';
-import * as bookMarkView from './views/bookmarksView';
+import Recipe from './models/Recipe';
+import * as bookMarkView from './views/bookMarkView';
 import BookMark from './models/BookMark';
 const state = {};
-state.bookMark = new BookMark();
-state.bookMark.getItemsFromStorage();
+
+const initialize = () => {
+    state.bookMark = new BookMark();
+    state.bookMark.getItemsFromStorage();
+    bookMarkView.renderAllBookMarks(state.bookMark.items);
+}
 
 /**
  * Search Controller 
@@ -24,10 +28,9 @@ const controlSearch = async () => {
             clearLoader();
             searchView.renderResults(state.search.results);
         }catch (error){
-            alert('Error in searching recipe');
+            renderError('Error in searching recipe');
             clearLoader();
         }
-
     }
 }
 
@@ -50,21 +53,25 @@ elements.searchResPage.addEventListener('click' , event => {
 * Recipe Controller 
 */
 
+const loadRecipeFromAPI = async (id) =>{
+    state.recipe = new Recipe(id);
+    await state.recipe.getRecipe();
+    state.recipe.calculateTime();
+    state.recipe.calculateServings();
+    state.recipe.isBookMark = state.bookMark.searchItem(state.recipe.id) === -1 ? false : true;
+    state.recipe.parseIngredients();
+}
+
 const controlRecipe = async (id) => {
     recipeView.clearRecipe();
     renderLoader(elements.recipe);
     if(state.search) searchView.highlightSelected(id);
     try{
-        state.recipe = new Recipe(id);
-        await state.recipe.getRecipe();
-        state.recipe.calculateTime();
-        state.recipe.calculateServings();
-        state.recipe.isBookMark = state.bookMark.searchItem(state.recipe.id) === -1 ? false : true;
-        state.recipe.parseIngredients();
+        await loadRecipeFromAPI(id);
         recipeView.renderRecipe(state.recipe);
     }
     catch(error){
-        alert(error);
+        renderError('Error in loading recipe');
     }
     clearLoader();
 }
@@ -73,7 +80,6 @@ elements.searchResList.addEventListener('click' , event => {
     const recipe = event.target.closest('.preview');
     if(recipe){
         const id = recipe.dataset.id;
-        console.log(id);
         if(state.recipe){
             if(state.recipe.id == id){
                 return;
@@ -104,22 +110,59 @@ elements.recipe.addEventListener('click' , event => {
 * Book Marks 
 */
 
+const bookMarkRecipe = (img , url , author ,title , id) => {
+    bookMarkView.hideMessage();
+    state.bookMark.addItem(img , title , url , author , id);
+    state.recipe.updateBookMarkStatus(true);
+    recipeView.renderBookMarkButton(state.recipe.isBookMark);
+    state.bookMark.saveItemsInStorage();
+}
+
+const unBookMarkRecipe = (id , isBookMark) => {
+    state.bookMark.deleteItem(id);
+    state.recipe.updateBookMarkStatus(false);
+    recipeView.renderBookMarkButton(isBookMark);
+    state.bookMark.saveItemsInStorage();
+}
 
 const handleBookMarkButtonClick = () => {
     const {img , url , author ,title , id} = state.recipe;
     if(!state.recipe.isBookMark){
-        bookMarkView.hideMessage();
-        state.bookMark.addItem(img , title , url , author , id);
-        state.recipe.updateBookMarkStatus(true);
-        recipeView.renderBookMarkButton(state.recipe.isBookMark);
-        state.bookMark.saveItemsInStorage();
+        bookMarkRecipe(img , url , author ,title , id);
     }
     else {
-        state.bookMark.deleteItem(id);
-        state.recipe.updateBookMarkStatus(false);
-        recipeView.renderBookMarkButton(state.recipe.isBookMark);
-        state.bookMark.saveItemsInStorage();
+        unBookMarkRecipe(id , state.recipe.isBookMark);
     }
     bookMarkView.renderAllBookMarks(state.bookMark.items);
 }
-bookMarkView.renderAllBookMarks(state.bookMark.items);
+
+elements.bookMarks.addEventListener('click' , e => {
+    let btn = e.target.closest('.btn--inline');
+    if(btn){
+        bookMarkView.clearBookmarks();
+        let goToPage = parseInt(btn.dataset.goto);
+        bookMarkView.renderAllBookMarks(state.bookMark.items , goToPage);
+    }
+})
+/********************************************************** */
+
+/**
+* Errors
+*/
+
+const getErrorElement = (errorMessage) => `
+    <div class="error">
+        <div>
+        <svg>
+            <use href="src/img/icons.svg#icon-alert-triangle"></use>
+        </svg>
+        </div>
+        <p>${errorMessage}. Please try again!</p>
+    </div>`;
+
+const renderError = (errorMessage) => {
+    elements.recipe.innerHTML = '';
+    elements.recipe.insertAdjacentHTML('afterbegin' , getErrorElement(errorMessage));
+}    
+
+initialize();
